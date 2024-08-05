@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>proxy-js - Hello World</title>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            width: 100%;
+            height: 100%;
+            background-color: #2e6191;
+            color: white;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            font-size: 1.5em;
+        }
+
+        .layout-center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+        }
+    </style>
+
+    <script type="module">
+        import { $p, $pLoad } from '../proxy-js/core.js'; 
+
+        //declare a web component
+        class HelloWorld extends HTMLElement {
+
+            //this is the obligatory model member, it is expected and known by proxy-js
+            //you can have other members to bind to but only model and its descendants will be listened to
+            model = {
+                title: 'Hello World!',
+                count: 0
+            };
+
+            constructor() {
+                super();
+
+                this.attachShadow({ mode: 'open', delegatesFocus: true });
+            }
+
+            connectedCallback() {
+                var $template = document.createElement('div');
+
+                //for simplicity, styles and html will be defined in a string
+                //later $p.dom.appendSheet and $pResource will be used to add styles and templates
+                $template.innerHTML = `
+                    <style>
+                        .text-clickable {
+                            cursor: pointer;
+                            user-select: none;
+                            transition: text-shadow 0.25s;
+                        }
+
+                        .text-clickable:hover {
+                            text-shadow: 0 0 5px lightgrey;
+                        }
+                    </style>
+
+                    <div class="text-clickable">
+                        <span @click="onClick(e)">{{model.title}} - Clicked {{model.count}} times (Click me)</span>
+                    </div>`;
+
+                //do binding and append manually
+                //later $pResource(url).bind(controller).appendTo($element) will be used
+                $p.bind(this, $template);
+
+                var elements = [];
+                Array.prototype.forEach.call($template.childNodes, $e => {
+                    elements.push($e);
+                });
+                
+                elements.forEach($e => {
+                    $e.parentElement.removeChild($e);
+                    this.shadowRoot.appendChild($e);
+                });
+            }
+
+            //this will be called on click due to the click event binding
+            onClick(e) {
+                //the model is listened to by the binding 
+                //so this will update the text displayed
+                ++this.model.count;
+            }
+        }
+
+        //wait for the dom content and proxy-js to be loaded
+        $pLoad(() => {
+            //register the web component
+            customElements.define('hello-world', HelloWorld);
+        });
+    </script>
+</head>
+<body>
+    <div class="layout-center">
+        <hello-world>
+        </hello-world>
+    </div>
+</body>
+</html>

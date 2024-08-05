@@ -1,0 +1,12 @@
+<div style="user-select: none; font-size: 24px;">
+    <input type="text" p-model="model.text.value" />
+    <div>{{model.text.value}}</div>
+</div>
+<div style="margin-top: 40px;"></div>
+<div style="user-select: none; font-size: 24px;">
+    <input type="checkbox" p-model="model.check.val0">Check 0</input>
+    <div></div>
+    <input type="checkbox" p-model="model.check.val1">Check 1</input>
+    <div>Check0 - {{model.check.val0}}; Check1 - {{model.check.val1}}</div>
+    <button @click="onReset(e)">Reset</button>
+</div>

@@ -1,0 +1,9 @@
+.text-clickable {
+    cursor: pointer;
+    user-select: none;
+    transition: text-shadow 0.25s;
+}
+
+.text-clickable:hover {
+    text-shadow: 0 0 5px lightgrey;
+}
