@@ -1,16 +1,16 @@
 import { $p, BindingBase } from './core.js'
 
 $p.components.core(function (core) {
-	class EventBinding extends BindingBase {
-	
-		constructor($e, controller, name, value) {
+    class EventBinding extends BindingBase {
+    
+        constructor($e, controller, name, value) {
             super();
 
-			core.addBinding($e, this, 'event');
-			this.$e = $e;
-			this.controller = controller;
-			this.value = value;
-	
+            core.addBinding($e, this, 'event');
+            this.$e = $e;
+            this.controller = controller;
+            this.value = value;
+    
             var eventString = name.substring(1);
             var separatorIndex = eventString.indexOf('&');
             if (separatorIndex > -1) {
@@ -21,9 +21,9 @@ $p.components.core(function (core) {
                 this.eventName = eventString;
             }
             
-			if (!this.eventName) {
-				throw new Error('Invalid event definition -> ' + name + ' ' + value + ', example: ' + '@event="handler($e, e, item)"');
-			}
+            if (!this.eventName) {
+                throw new Error('Invalid event definition -> ' + name + ' ' + value + ', example: ' + '@event="handler($e, e, item)"');
+            }
 
             const { handler, parameter } = core.eventHandlerExpression(value);
 
@@ -34,8 +34,8 @@ $p.components.core(function (core) {
             if (typeof controller[handler] != 'function') {
                 throw new Error('Event callback is not a function or does not exists -> ' + name + ' ' + value);
             }
-		
-			$e.addEventListener(this.eventName, this.handler = (e) => {
+        
+            $e.addEventListener(this.eventName, this.handler = (e) => {
                 var $target = this.$e;
                 if (this.eventMatch) {
                     var $eMatch = e.composedPath().find($p => $p.matches && $p.matches(this.eventMatch));
@@ -47,12 +47,12 @@ $p.components.core(function (core) {
                     }
                 }
 
-				const contextFunction = core.virtualContext($target, controller, ['$e', $target, 'e', e]);
-				contextFunction.exec('_callback(' + parameter + ')', function () {
-					controller[handler].apply(controller, arguments);
-				});
-			});
-		}
+                const contextFunction = core.virtualContext($target, controller, ['$e', $target, 'e', e]);
+                contextFunction.exec('_callback(' + parameter + ')', function () {
+                    controller[handler].apply(controller, arguments);
+                });
+            });
+        }
 
         destroy() {
             this.$e.removeEventListener(this.eventName, this.handler);
@@ -62,9 +62,9 @@ $p.components.core(function (core) {
             delete this.eventName;
             delete this.handler;
         }
-	}
+    }
 
-	core.cstr.eventBinding = EventBinding;
+    core.cstr.eventBinding = EventBinding;
 
     core.addAttrHandler({
         can: function ($e, controller, name, value) {

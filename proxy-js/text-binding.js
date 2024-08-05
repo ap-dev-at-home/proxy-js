@@ -1,38 +1,38 @@
 import { $p, BindingBase } from './core.js'
 
 $p.components.core(function (core) {	
-	class TextBinding extends BindingBase {
-	
-		constructor($text, controller, expression) {
+    class TextBinding extends BindingBase {
+    
+        constructor($text, controller, expression) {
             super();
 
-			core.addBinding($text, this, 'text');
-			this.$text = $text;
-			this.controller = controller;
-			this.expression = $text.textContent;
+            core.addBinding($text, this, 'text');
+            this.$text = $text;
+            this.controller = controller;
+            this.expression = $text.textContent;
             this.observerParentCallbackHandler = this.observerParentCallback.bind(this);
             this.observerCallbackHandler = this.observerCallback.bind(this);
-			this.expressions = [];
+            this.expressions = [];
             this.listener = [];
 
-			this.parse();
-			this.exec();
-			this.observe();
-		}
+            this.parse();
+            this.exec();
+            this.observe();
+        }
 
-		parse() {
+        parse() {
             this.expressions = core.textExpression(this.expression);
 
             const propsArray = ['$text', this.$text];
             core.ioHandler.forEach(h => propsArray.push(`$${h.name}`, h.out));
 
-			this.virtualContext = core.virtualContext(this.$text, this.controller, propsArray);
-		}
+            this.virtualContext = core.virtualContext(this.$text, this.controller, propsArray);
+        }
 
-		exec() {
-			var textContent = '';
+        exec() {
+            var textContent = '';
 
-			for (var i = 0; i < this.expressions.length; i++) {
+            for (var i = 0; i < this.expressions.length; i++) {
 
                 const descriptor = this.expressions[i];
                 const isText = (descriptor.text != undefined);
@@ -45,15 +45,15 @@ $p.components.core(function (core) {
                         textContent = textContent + value;
                     });
                 }
-			}
+            }
 
-			this.$text.textContent = textContent;
-		}
+            this.$text.textContent = textContent;
+        }
 
-		observe() {
+        observe() {
             this.destroyObserver();
 
-			this.expressions.forEach(x => {
+            this.expressions.forEach(x => {
                 if (x.expression == undefined) {
                     return;
                 }
@@ -61,8 +61,8 @@ $p.components.core(function (core) {
                 x.identifiers.forEach(identifier => {
                     this.defaultListener(identifier, this.listener, this.observerCallbackHandler, this.observerParentCallbackHandler);
                 });
-			});
-		}
+            });
+        }
 
         observerParentCallback(type, obj, prop, value, oldValue) {
             this.observe();
@@ -75,21 +75,21 @@ $p.components.core(function (core) {
 
         destroyObserver() {
             this.listener.forEach(l => { l.remove(); });
-			this.listener = [];
+            this.listener = [];
         }
 
-		destroy() {
-			this.destroyObserver();
+        destroy() {
+            this.destroyObserver();
             delete this.observerCallbackHandler;
             delete this.observerParentCallbackHandler;
             delete this.expressions;
-			delete this.$text;
-			delete this.controller;
+            delete this.$text;
+            delete this.controller;
             delete this.virtualContext;
-		}
-	}
+        }
+    }
 
-	core.cstr.textBinding = TextBinding;
+    core.cstr.textBinding = TextBinding;
 
     core.addNodeHandler({
         can: function ($e) {

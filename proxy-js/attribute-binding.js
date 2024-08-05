@@ -1,55 +1,55 @@
 import { $p, BindingBase } from './core.js'
 
 $p.components.core(function (core) {
-	class AttributeBinding extends BindingBase {
-	
-		constructor($e, controller, name, expression) {
+    class AttributeBinding extends BindingBase {
+    
+        constructor($e, controller, name, expression) {
             super();
 
-			core.addBinding($e, this, 'attribute');
-			this.$e = $e;
-			this.controller = controller;
-			this.expression = expression;
-			this.observerParentCallbackHandler = this.observerParentCallback.bind(this);
+            core.addBinding($e, this, 'attribute');
+            this.$e = $e;
+            this.controller = controller;
+            this.expression = expression;
+            this.observerParentCallbackHandler = this.observerParentCallback.bind(this);
             this.observerCallbackHandler = this.observerCallback.bind(this);
             this.listener = [];
 
-			this.parse(name);
-			this.exec();
-			this.observe();
-		}
+            this.parse(name);
+            this.exec();
+            this.observe();
+        }
 
-		parse(name) {
-			const attrName = name.substr(1);
-			if (!attrName) {
-				throw new Error('Invalid attribute definition -> ' + this.name + ' ' + this.expression + ', example: ' + ':disabled="model.disabled"');
-			}
+        parse(name) {
+            const attrName = name.substr(1);
+            if (!attrName) {
+                throw new Error('Invalid attribute definition -> ' + this.name + ' ' + this.expression + ', example: ' + ':disabled="model.disabled"');
+            }
 
-			this.name = attrName;
+            this.name = attrName;
 
             this.identifiers = core.findIdentifiers(this.expression);
 
             this.virtualContext = core.virtualContext(this.$e, this.controller);
-		}
+        }
 
         exec() {
-			const virtualContext = core.virtualContext(this.$e, this.controller);
-			const value = virtualContext.exec(this.expression);
-			if (value == undefined) {
-				this.$e.removeAttribute(this.name);
-			}
-			else {
-				this.$e.setAttribute(this.name, value);
-			}
-		}
+            const virtualContext = core.virtualContext(this.$e, this.controller);
+            const value = virtualContext.exec(this.expression);
+            if (value == undefined) {
+                this.$e.removeAttribute(this.name);
+            }
+            else {
+                this.$e.setAttribute(this.name, value);
+            }
+        }
 
-		observe() {
-			this.destroyObserver();
+        observe() {
+            this.destroyObserver();
 
             this.identifiers.forEach(identifier => {
                 this.defaultListener(identifier, this.listener, this.observerCallbackHandler, this.observerParentCallbackHandler);
             });
-		}
+        }
 
         observerParentCallback(type, obj, prop, value, oldValue) {
             this.observe();
@@ -62,7 +62,7 @@ $p.components.core(function (core) {
 
         destroyObserver() {
             this.listener.forEach(l => { l.remove(); });
-			this.listener = [];
+            this.listener = [];
         }
 
         destroy() {
@@ -74,9 +74,9 @@ $p.components.core(function (core) {
             delete this.controller;
             delete this.identifiers;
         }
-	}
+    }
 
-	core.cstr.attributeBinding = AttributeBinding;
+    core.cstr.attributeBinding = AttributeBinding;
 
     core.addAttrHandler({
         priority: 1,

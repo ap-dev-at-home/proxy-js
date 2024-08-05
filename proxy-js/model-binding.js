@@ -1,30 +1,30 @@
 import { $p, BindingBase } from './core.js'
 
 $p.components.core(function (core) {
-	class ModelBinding extends BindingBase {
-	
-		constructor($e, controller, expression) {
+    class ModelBinding extends BindingBase {
+    
+        constructor($e, controller, expression) {
             super();
             
-			core.addBinding($e, this, 'model');
-			this.$e = $e;
-			this.controller = controller;
-			this.expression = expression;
+            core.addBinding($e, this, 'model');
+            this.$e = $e;
+            this.controller = controller;
+            this.expression = expression;
             this.identifiers = [];
             this.inputCallbackHandler = this.onInputCallback.bind(this);
             this.observerParentCallbackHandler = this.observerParentCallback.bind(this);
             this.observerCallbackHandler = this.observerCallback.bind(this);
-			this.listener = [];
+            this.listener = [];
 
-			this.parse();
-			this.exec();
+            this.parse();
+            this.exec();
             this.events();
-			this.observe();
-		}
+            this.observe();
+        }
 
         parse() {
             this.identifiers = core.findIdentifiers(this.expression);
-			
+            
             if (this.identifiers.length > 1) {
                 throw new Error('Model contains more than one identifier -> ' + this.expression + ', example p-model="model.value"');
             }
@@ -34,28 +34,28 @@ $p.components.core(function (core) {
             }
 
             this.virtualContext = core.virtualContext(this.$e, this.controller);
-		}
+        }
 
-		exec() {
+        exec() {
             const identifier = this.identifiers[0];
-			const value = this.virtualContext.exec(identifier.name);
-			if (this.$e.tagName == 'INPUT') {
-				if (this.$e.type == 'text') {
-					if (value == undefined || value == null)
-						this.$e.value = '';
-					else 
-						this.$e.value = value;
-				}
-				else if (this.$e.type == 'checkbox') {
+            const value = this.virtualContext.exec(identifier.name);
+            if (this.$e.tagName == 'INPUT') {
+                if (this.$e.type == 'text') {
+                    if (value == undefined || value == null)
+                        this.$e.value = '';
+                    else 
+                        this.$e.value = value;
+                }
+                else if (this.$e.type == 'checkbox') {
                     if (value == undefined || value == null || value == false) {
                         this.$e.checked = false;
                     }
-					else if (value == true) {
-						this.$e.checked = value;
+                    else if (value == true) {
+                        this.$e.checked = value;
                     }
-				}
-			}
-		}
+                }
+            }
+        }
 
         events() {
             //input -> model
@@ -68,21 +68,21 @@ $p.components.core(function (core) {
 
             //model -> input
             this.defaultListener(identifier, this.listener, this.observerCallbackHandler, this.observerParentCallbackHandler);
-		}
+        }
 
         onInputCallback(e) {
             const identifier = this.identifiers[0];
-			if (this.$e.tagName == 'INPUT') {
+            if (this.$e.tagName == 'INPUT') {
                 const obj = this.virtualContext.exec(identifier.parentName);
 
-				if (this.$e.type == 'text') {    
-					obj[identifier.propertyName] = new core.cstr.silent(e.target.value, this.listener);
-				}
-				else if (this.$e.type == 'checkbox') {
-					obj[identifier.propertyName] = new core.cstr.silent(e.target.checked, this.listener);
-				}
-			}
-		}
+                if (this.$e.type == 'text') {    
+                    obj[identifier.propertyName] = new core.cstr.silent(e.target.value, this.listener);
+                }
+                else if (this.$e.type == 'checkbox') {
+                    obj[identifier.propertyName] = new core.cstr.silent(e.target.checked, this.listener);
+                }
+            }
+        }
 
         observerParentCallback(type, obj, prop, value, oldValue) {
             this.observe();
@@ -95,7 +95,7 @@ $p.components.core(function (core) {
 
         destroyObserver() {
             this.listener.forEach(l => { l.remove(); });
-			this.listener = [];
+            this.listener = [];
         }
 
         destroy() {
@@ -109,9 +109,9 @@ $p.components.core(function (core) {
             delete this.controller;
             delete this.identifiers;
         }
-	}
+    }
 
-	core.cstr.modelBinding = ModelBinding;
+    core.cstr.modelBinding = ModelBinding;
 
     core.addAttrHandler({
         can: function ($e, controller, name, value) {

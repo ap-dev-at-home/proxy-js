@@ -8,32 +8,32 @@ export class SilentValue {
 }
 
 export class CancellationToken {
-	#canceled = false;
-	#listener = [];
+    #canceled = false;
+    #listener = [];
 
-	get isCanceled() {
-		return this.#canceled;
-	};
+    get isCanceled() {
+        return this.#canceled;
+    };
 
-	constructor(name) {
-		this.name = name;
-	}
+    constructor(name) {
+        this.name = name;
+    }
 
-	add(callback) {
-		this.#listener.push(callback);
-	}
+    add(callback) {
+        this.#listener.push(callback);
+    }
 
-	cancel() {
-		this.#canceled = true;
-		this.#listener.forEach(callback => {
-			try {
-				callback();
-			}
-			catch {
+    cancel() {
+        this.#canceled = true;
+        this.#listener.forEach(callback => {
+            try {
+                callback();
+            }
+            catch {
 
-			}
-		});
-	}
+            }
+        });
+    }
 }
 
 class ProxyListener {

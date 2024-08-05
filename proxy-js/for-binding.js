@@ -6,12 +6,12 @@ $p.components.core(function (core) {
     
     const ATTRIBUTE_NAME_COMPONENT = 'p-component';
 
-	class ForBinding extends BindingBase {
-	
-		constructor($e, controller, expression) {
+    class ForBinding extends BindingBase {
+    
+        constructor($e, controller, expression) {
             super();
 
-			core.addBinding($e, this, 'for');
+            core.addBinding($e, this, 'for');
 
             if ($e.tagName == 'TEMPLATE') {
                 this.extractTemplateCallback($e, controller);
@@ -20,31 +20,31 @@ $p.components.core(function (core) {
                 this.$template = $e.cloneNode(true);
                 this.$template.removeAttribute('p-for');
             }
-			
-			this.controller = controller;
-			this.expression = expression;
+            
+            this.controller = controller;
+            this.expression = expression;
             this.listener = [];
-			
-			const forComponents = expression.split(' ');
-			if (forComponents.length != 3) {
-				throw new Error('Expression not recognized ' + expression);
-			}
+            
+            const forComponents = expression.split(' ');
+            if (forComponents.length != 3) {
+                throw new Error('Expression not recognized ' + expression);
+            }
 
-			this.forComponents = forComponents;
+            this.forComponents = forComponents;
 
-			//create comment
-			this.$for = document.createComment('for ' + expression);
+            //create comment
+            this.$for = document.createComment('for ' + expression);
             this.$for.bindings = [this];
-			core.setBindingData(this.$for, {
+            core.setBindingData(this.$for, {
                 instance: this
             }, BINDING_TYPE_FOR);
-			
-			//replace for-element by for-comment
-			$e.parentNode.replaceChild(this.$for, $e);
             
-			this.exec();
-			this.observe();
-		}
+            //replace for-element by for-comment
+            $e.parentNode.replaceChild(this.$for, $e);
+            
+            this.exec();
+            this.observe();
+        }
 
         extractTemplateCallback($e, controller) {
             const onItem = $e.getAttribute(ATTRIBUTE_NAME_COMPONENT);
@@ -62,23 +62,23 @@ $p.components.core(function (core) {
             this.handler = controller[handler].bind(this.controller);
         }
 
-		exec() {
+        exec() {
             const result = [];
 
-			this.virtualContext = core.virtualContext(this.$for, this.controller);
-			
+            this.virtualContext = core.virtualContext(this.$for, this.controller);
+            
             var $refNode = this.$for;
-			this.virtualContext.exec('for (var index = 0; index < ' + this.forComponents[2] + '.length; index++) { _callback(' + this.forComponents[2] + '[index], index, ' + this.forComponents[2] + ');  }', (item, index, array) => { 
-				const $item = this.createNode(index, item);
+            this.virtualContext.exec('for (var index = 0; index < ' + this.forComponents[2] + '.length; index++) { _callback(' + this.forComponents[2] + '[index], index, ' + this.forComponents[2] + ');  }', (item, index, array) => { 
+                const $item = this.createNode(index, item);
                 result.push($item);
-				this.$for.parentNode.insertBefore($item, $refNode.nextSibling);
-				$refNode = $item;
-			});
+                this.$for.parentNode.insertBefore($item, $refNode.nextSibling);
+                $refNode = $item;
+            });
 
             return result;
-		}
+        }
 
-		createNode(index, item) {
+        createNode(index, item) {
             var $item = null;
 
             if (this.handler) {
@@ -98,25 +98,25 @@ $p.components.core(function (core) {
             }
 
             core.setBindingData($item, {
-				index: index,
-				$for: this.$for,
-				scopeName: this.forComponents[0], 
+                index: index,
+                $for: this.$for,
+                scopeName: this.forComponents[0], 
                 value: item
-			}, BINDING_TYPE_FOR_ITEM);
+            }, BINDING_TYPE_FOR_ITEM);
 
-			return $item;
-		}
+            return $item;
+        }
 
-		observe() {
-			const array = this.virtualContext.exec(this.forComponents[2]);
-			const parent = this.virtualContext.exec(core.getParentObjectName(this.forComponents[2]));
-			const propertyName = core.getPropertyName(this.forComponents[2])
+        observe() {
+            const array = this.virtualContext.exec(this.forComponents[2]);
+            const parent = this.virtualContext.exec(core.getParentObjectName(this.forComponents[2]));
+            const propertyName = core.getPropertyName(this.forComponents[2])
 
-			const arrayListener = array._observe((type, arr, prop, value, oldValue) => {
-				const index = parseInt(prop);
-				if (isNaN(index)) {
-					return;
-				}
+            const arrayListener = array._observe((type, arr, prop, value, oldValue) => {
+                const index = parseInt(prop);
+                if (isNaN(index)) {
+                    return;
+                }
                 
                 var eIdx = -1, lastIdx = -1;
                 for (var i = core.nodeIndex(this.$for) + 1; i < this.$for.parentNode.childNodes.length; i++) {
@@ -129,66 +129,66 @@ $p.components.core(function (core) {
                     }                    
                 }
 
-				if (type == 'set') {	
-					const $item = this.createNode(index, value);
+                if (type == 'set') {	
+                    const $item = this.createNode(index, value);
 
-					if (eIdx > -1) {
+                    if (eIdx > -1) {
                         core.bindingsDisconnect(this.$for.parentElement.childNodes[eIdx]);
                         this.$for.parentElement.replaceChild($item, this.$for.parentElement.childNodes[eIdx]);
-					}
-					else {
+                    }
+                    else {
                         core.insertAfter($item, lastIdx < 0 ? this.$for : this.$for.parentElement.childNodes[lastIdx]);
-					}
+                    }
 
-					core.bindingsConnect(this.controller, $item);
-				}
-				else if (type == 'delete') {
+                    core.bindingsConnect(this.controller, $item);
+                }
+                else if (type == 'delete') {
                     core.bindingsDisconnect(this.$for.parentElement.childNodes[eIdx]);
-					this.$for.parentNode.removeChild(this.$for.parentElement.childNodes[eIdx]);
-				}
-			});
+                    this.$for.parentNode.removeChild(this.$for.parentElement.childNodes[eIdx]);
+                }
+            });
             
             const parentListenerCallback = (type, obj, prop, value, oldValue) => {
                 arrayListener.move(value);
 
                 //remove elements
                 const elements = [];
-				core.arr.forEach.call(this.$for.parentElement.children, $e => {
+                core.arr.forEach.call(this.$for.parentElement.children, $e => {
                     const bindingData = core.getBindingData($e, BINDING_TYPE_FOR_ITEM);
-					if (bindingData && bindingData.$for == this.$for) {
-						elements.push($e);
-					}
-				});
+                    if (bindingData && bindingData.$for == this.$for) {
+                        elements.push($e);
+                    }
+                });
 
-				elements.forEach($e => {
+                elements.forEach($e => {
                     core.bindingsDisconnect($e);
                     $e.parentElement.removeChild($e);
                 });
 
                 //add, bind elements
                 this.exec().forEach($item => { core.bindingsConnect(this.controller, $item) });
-			};
+            };
 
             const parentListener = parent._observe(parentListenerCallback, propertyName);
 
             this.listener.push(arrayListener, parentListener);
-		}
+        }
 
         destroyObserver() {
             this.listener.forEach(l => { l.remove(); });
-			this.listener = [];
+            this.listener = [];
         }
 
         destroy() {
             this.destroyObserver();
-			delete this.$template;
+            delete this.$template;
             delete this.$for;
-			delete this.controller;
+            delete this.controller;
             delete this.virtualContext;
         }
-	}
+    }
 
-	core.cstr.forBinding = ForBinding;
+    core.cstr.forBinding = ForBinding;
 
     core.addAttrHandler({
         priority: 3,
