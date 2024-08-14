@@ -1,29 +1,49 @@
 ### Beta/Evaluation-Warning ⚠️
 
-This is a library is for my personal technical education/training only. I started Proxy-JS as an experimental library, sometimes using it for non-critical private applications or prototyping. __BUT__ it is __NOT__ safe, tested or final for production environment or any other purpose.
+This a library is intended for my personal technical education/training only. I started Proxy-JS as an experimental endeavour to evaluate the utilizability of ES6-Proxies for Javascript data binding. __BUT__ it is __NOT__ safe, tested or final for production environment or any other purpose.
 
-### Proxy-JS - A primitive library to evaluate Javascript binding with proxies
+### Proxy-JS - A primitive Javascript data binding library
 
 - Few APIs
 - No buildsteps
-- Based on well known Javascript/HTML5 Concepts (WebComponents, Proxies)
 - Lightweight
+- Based on well known Javascript/HTML5 Concepts 
+    - WebComponents
+    - Proxies
+    - Others...
+- Binding Html-Resources to WebComponents
+- Managing resources like
+    - Css
+    - Html-Templates
 - Based on some of the radical simplicity paradigm I found [here](https://www.radicalsimpli.city/)
     - Radical Simplicity takes away all the technology that doesn’t deliver customer value.
-    - Radical Simplicity leads to deep domains and deep tech.
-    - Radical Simplicity leads to higher quality.
     - Radical Simplicity makes it easy for new developers to understand a system.
-    - Radical Simplicity makes setting up and testing easy.
     - Radical Simplicity puts you back in control.
-
-### Proxy-JS aims to make easy
-
-- Managing resources like css, html-templates
-- Binding html-resources to webcomponents
-
-<br>
+    - ...
 
 ### Webcomponent example
+
+```html
+<!--hello-world.html-->
+
+<div class="text-clickable">
+    <span @click="onClick(e)">{{model.title}}<br/>Clicked {{model.count}} times (Click me)</span>
+</div>
+```
+
+```css
+/*hello-world.css*/
+
+.text-clickable {
+    cursor: pointer;
+    user-select: none;
+    transition: text-shadow 0.25s;
+}
+
+.text-clickable:hover {
+    text-shadow: 0 0 5px lightgrey;
+}
+```
 
 ```javascript
 import { $p, $pLoad } from '../proxy-js/core.js';
@@ -66,23 +86,19 @@ $pLoad(() => {
 });
 ```
 
-<br>
-
 ### API Calls
 
 | Import | Description | Parameter |
 | ------- | -------- |----------- |
-|$pLoad(`callback`)  | callback called when document is ready and proxy-js is load | `callback` - parameterless function | 
+|$pLoad(`callback`)  | `callback` called when document is ready and proxy-js is load | `callback` - parameterless function | 
 | $template | _Type_ | Represents a html-resource |
 | $pResource(`url`) <br> _`returns`_ - promise resolving to a `$template` | Fetch and cache a html-resource (_awaitable method_) | `url` - address to the html-resource |
 | $template.bind(`webcomponent`) <br> _`returns`_ - the `$template` | Binds a `$template` to the model of a webcomponent | `webcomponent` - the webcomponent object |
 | $template.appendTo(`$element`) <br> _`returns`_ - the `$template` | Appends the `$template` to a DOM `$element` | `$element` - DOM element|
 | $p | Global library object | Provides access to the libraries functions and core |
 | $p.bind(`webcomponent`, `$template`) | Bind `$template` to the model of a webcomponent | `webcomponent` - the webcomponent object <br> `$template` - html-resource |
-| $p.dom.styleSheet(`url`, `name`) | Map a stylesheet to a `name` | `url` - adress to a stylesheet <br> `name` - name to map the stylesheet |
+| $p.dom.styleSheet(`url`, `name`) | Maps the stylesheet at `url` to a `name` | `url` - adress to a stylesheet <br> `name` - name to map the stylesheet |
 | $p.dom.appendSheet(`shadowRoot`, `name1, ...nameX`) | Append stylesheets to the `shadowRoot` of a webcomponent | `shadowRoot` - shadowRoot of a Webcomponent <br> `name1...nameX` - Names of the mapped stylesheets to append  |
-
-<br>
 
 ### Binding Attributes
 
