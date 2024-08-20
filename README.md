@@ -15,11 +15,6 @@ This a library is intended for my personal technical education/training only. I 
 - Managing resources like
     - Css
     - Html-Templates
-- Based on some of the radical simplicity paradigm I found [here](https://www.radicalsimpli.city/)
-    - Radical Simplicity takes away all the technology that doesn’t deliver customer value.
-    - Radical Simplicity makes it easy for new developers to understand a system.
-    - Radical Simplicity puts you back in control.
-    - ...
 
 ### Webcomponent example
 
