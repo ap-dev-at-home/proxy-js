@@ -1,6 +1,6 @@
 ### Beta/Evaluation-Warning ⚠️
 
-This an experimental library intended for my personal technical education/training only. I started Proxy-JS as an endeavour to evaluate the utilizability of ES6-Proxies for Javascript data binding. __BUT__ it is __NOT__ safe, tested or final for production environment or any other purpose.
+Proxy-JS is an experimental library intended for my personal technical education/training only. I started Proxy-JS as an endeavour to evaluate the utilizability of ES6-Proxies for Javascript data binding. __BUT__ it is __NOT__ safe, tested or final for production environment or any other purpose.
 
 ### Proxy-JS - A primitive Javascript data binding library
 
