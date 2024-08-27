@@ -136,16 +136,17 @@ const core = {
     },
 
     getBindingData: function ($e, type) {
-        return ($e[this.BINDING_DATA_PROPERTY_NAME] && (type == undefined || $e[this.BINDING_DATA_PROPERTY_NAME].type == type) ? $e[this.BINDING_DATA_PROPERTY_NAME] : undefined);
+        return ($e[core.BINDING_DATA_PROPERTY_NAME] 
+            && (type == undefined || $e[core.BINDING_DATA_PROPERTY_NAME].type == type) ? $e[core.BINDING_DATA_PROPERTY_NAME] : undefined);
     },
 
     setBindingData: function ($e, bindingData, type) {
         bindingData.type = type;
-        return $e[this.BINDING_DATA_PROPERTY_NAME] = bindingData;
+        return $e[core.BINDING_DATA_PROPERTY_NAME] = bindingData;
     },
 
     addBinding: function ($e, binding, type) {
-        const bindings = $e[this.BINDINGS_PROPERTY_NAME] || ($e[this.BINDINGS_PROPERTY_NAME] = []);
+        const bindings = $e[core.BINDINGS_PROPERTY_NAME] || ($e[core.BINDINGS_PROPERTY_NAME] = []);
         binding.type = type;
         bindings.push(binding);
     },
@@ -217,7 +218,69 @@ const core = {
             || (e && e.nodeType == Node.DOCUMENT_FRAGMENT_NODE);
     },
 
+    copy: function (value) {
+        if (value === null || value === undefined) {
+            return value;
+        }
+    
+        if (typeof value !== 'object') {
+            return value;
+        }
+    
+        if (value instanceof Date) {
+            return new Date(value.getTime());
+        }
+    
+        if (value instanceof RegExp) {
+            return new RegExp(value);
+        }
+    
+        if (Array.isArray(value)) {
+            return value.map(item => core.copy(item));
+        }
+    
+        if (value instanceof Map) {
+            const newMap = new Map();
+            value.forEach((v, k) => {
+                newMap.set(k, core.copy(v));
+            });
+            return newMap;
+        }
+    
+        if (value instanceof Set) {
+            const newSet = new Set();
+            value.forEach(v => {
+                newSet.add(core.copy(v));
+            });
+            return newSet;
+        }
+    
+        const newObject = {};
+        for (const key in value) {
+            if (value.hasOwnProperty(key) && core.isFunction(value[key]) == false) {
+                newObject[key] = core.copy(value[key]);
+            }
+        }
+    
+        return newObject;
+    },
+
     nextToken: function (str, pos, token) {
+        var p = pos, isString = false;
+
+        while (p < str.length) {
+            var c = str.charCodeAt(p);
+            if (token(c) === false) {
+                return str.substring(pos, p);
+            }
+
+            p++;
+        }
+
+        return str;
+    },
+
+    nextTokenPosition: function (str, pos, token) {
         var p = pos, isString = false;
 
         while (p < str.length) {
@@ -256,15 +319,23 @@ const core = {
         }
     },
 
+    isEventIdentifier: function (c) {
+        return (c >= 97 && c <= 122)   //a - z
+            || (c >= 65 && c <= 90)    //A - Z
+            || (c >= 48 && c <= 57)    //0 - 9
+            || (c == 36) || (c == 95)  //$, _
+            || (c == 45) || (c == 58); //-, : 
+    },
+
     isIdentifier: function (c) {
         return (c >= 97 && c <= 122)   //a - z
             || (c >= 65 && c <= 90)    //A - Z
             || (c >= 48 && c <= 57)    //0 - 9
-            || (c == 36) || (c == 95); //$ _
+            || (c == 36) || (c == 95); //$, _
     },
 
     isSeparator: function (c) {
-        return (c == 46); //$ .
+        return (c == 46); //.
     },
 
     findIdentifiers: function (str, start) {
@@ -272,7 +343,7 @@ const core = {
         const result = [];
 
         while (p < str.length) {
-            const t = this.nextToken(str, p, this.isIdentifier);
+            const t = this.nextTokenPosition(str, p, this.isIdentifier);
             if (t == undefined) {
                 break;
             }
@@ -302,12 +373,12 @@ const core = {
         var pos = 0;
         
         do {
-            const posStart = this.nextToken(text, pos, '{{');
+            const posStart = this.nextTokenPosition(text, pos, '{{');
             if (posStart == undefined) {
                 break;
             }
             
-            var posEnd = this.nextToken(text, posStart, '}}');
+            var posEnd = this.nextTokenPosition(text, posStart, '}}');
             if (posEnd == undefined) {
                 break;
             }
@@ -334,7 +405,7 @@ const core = {
     },
 
     eventHandlerExpression: function (value) {
-        const pos = core.nextToken(value, 0, '(');
+        const pos = core.nextTokenPosition(value, 0, '(');
         
         if (pos == undefined) {
             return { handler: null, parameter: null };
@@ -342,7 +413,7 @@ const core = {
 
         const handler = value.substring(0, pos);
         
-        const posEnd = core.nextToken(value, pos, ')');
+        const posEnd = core.nextTokenPosition(value, pos, ')');
 
         if (posEnd == undefined) {
             return { handler: null, parameter: null };
@@ -580,12 +651,38 @@ export const $p = {
         return $e;
     },
 
+    unbind: function ($e) {
+        (core.isArray($e) ? $e : [$e]).forEach($e => core.bindingsDisconnect($e));
+    },
+
     components: {
         core: function (f) {
             f(core);
         }
     },
     
+    event: {
+        one: function ($e, eventName, handler, options) {
+            var innerHandler = function (e) {
+                if (options) {
+                    $e.removeEventListener(eventName, innerHandler, options);
+                }
+                else {
+                    $e.removeEventListener(eventName, innerHandler);
+                }
+                
+                handler(e);
+            };
+
+            if (options) {
+                $e.addEventListener(eventName, innerHandler, options);
+            }
+            else {
+                $e.addEventListener(eventName, innerHandler);
+            }
+        }
+    },
+
     dom: {
         value: function ($e) {
             return core.getBindingData($e)?.value;
@@ -680,9 +777,11 @@ const _proxyHandlerDelete = function (obj, prop, listener) {
     if (prop in obj) {
         const oldValue = obj[prop];
         delete obj[prop];
+
         listener.forEach(l => {
             l.callback('delete', obj, prop, undefined, oldValue);
         });
+        
         return true;
     }
 
@@ -717,13 +816,20 @@ const _extendObserver = function (obj, listener) {
         }
     };
 
+    
+    const _unwrap = function () {
+        return core.copy(this);
+    };
+
     if (_proxyReferences.has(obj) == true) {
         obj._observe = new core.cstr.silent(_observe);
         obj._unobserve = new core.cstr.silent(_unobserve);
+        obj._unwrap = new core.cstr.silent(_unwrap);
     }
     else {
         obj._observe = _observe;
         obj._unobserve = _unobserve;
+        obj._unwrap = _unwrap;
     }
 };
 
@@ -753,8 +859,8 @@ const _proxify = function (obj) {
         }
     };
 
-    if (obj._observe || obj._unobserve) {
-        throw new Error('Object can not have method _observe/_unobserve');
+    if (obj._observe || obj._unobserve || obj._unwrap) {
+        throw new Error('Object can not have method _observe/_unobserve/_unwrap');
     }
 
     const proxy = new Proxy(obj, handler);
@@ -770,8 +876,8 @@ const _propertyListen = function (obj, propertyName) {
     const listener = [];
     var val = obj[propertyName];
 
-    if (obj._observe || obj._unobserve) {
-        throw new Error('Object can not have method _observe/_unobserve');
+    if (obj._observe || obj._unobserve || obj._unwrap) {
+        throw new Error('Object can not have method _observe/_unobserve/_unwrap');
     }
 
     Object.defineProperty(obj, propertyName, {
