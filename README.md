@@ -6,7 +6,6 @@ Proxy-JS is an experimental library intended for my personal technical education
 
 - Few APIs
 - No buildsteps
-- Lightweight
 - Based on well known Javascript/HTML5 Concepts 
     - WebComponents
     - Proxies
@@ -92,6 +91,7 @@ $pLoad(() => {
 | $template.appendTo(`$element`) <br> _`returns`_ - the `$template` | Appends the `$template` to a DOM `$element` | `$element` - DOM element|
 | $p | Global library object | Provides access to the libraries functions and core |
 | $p.bind(`webcomponent`, `$template`) | Bind `$template` to the model of a webcomponent | `webcomponent` - the webcomponent object <br> `$template` - html-resource |
+| $p.unbind(`$e`) | Recursively removes all bindings within `$e` and its descendants | `$e` - element to unbind |
 | $p.dom.styleSheet(`url`, `name`) | Maps the stylesheet at `url` to a `name` | `url` - adress to a stylesheet <br> `name` - name to map the stylesheet |
 | $p.dom.appendSheet(`shadowRoot`, `name1, ...nameX`) | Append stylesheets to the `shadowRoot` of a webcomponent | `shadowRoot` - shadowRoot of a Webcomponent <br> `name1...nameX` - Names of the mapped stylesheets to append  |
 
@@ -105,7 +105,8 @@ $pLoad(() => {
 | :disabled="`model.disabled ? 'disabled' : undefined`" | Attribute binding | Evaluates to the right hand expression, removed when expression is undefined | `expression` |
 | p-model="model.title" | Model binding for inputs | Binds the value of an $input element (text, checkbox) | - |
 | p-for="`book` in `model.books`" | Iterative binding | Repeats an element from the objects of an array. <br> The objects in the array will be the models of the webcomponents created by the binding | `name` in `array` |
-| @`event`="`callback`(`$e`, `e`, `item`)" | Event binding | Binds an `event` to a `callback` with optional parameter | `@event` - name of the event (e.g. click) <br>`callback` - name of the callback methd<br> `$e` - target or delegate $element <br> `e` - event <br> `item` - name of a for-item (e.g. book) |
+| @`event`="`callback`(`$e`, `e`, `item`)" | Event binding | Binds an `event` to a `callback` with optional parameters | `@event` - name of the event (e.g. click) <br /><br />`callback` - name of the callback methd<br /><br /> `$e` - target or delegate $element <br /><br /> `e` - event <br /><br /> `item` - name of a for-item (e.g. book) |
+| @`event`.`modifier`&`selector`=... | Event binding | Binds an `event` with optional modifiers and/or selector | `@event` - name of the event (e.g. click) <br /><br /> `modifier` - can be <br /> - once <br/> - capture <br /><br />`selector` - a valid css selector |
 
 <br>
 
@@ -182,19 +183,3 @@ onTaskComponent(task) {
     }
 }
 ```
-
-### Delegate Event - Receive event matched by a selector
-
-```html
-<!--only handle events matching a selector-->
-<div @click&selector="onClickItem($e)"></div>
-```
-
-### Delegate for-item - Receive delegated event paramters
-
-```html
-<!--receive the for-items model in a delegate event-handler-->
-<div @click&selector="onClickItem($e, e, task)"></div>
-```
-
-
