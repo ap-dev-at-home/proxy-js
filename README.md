@@ -21,7 +21,7 @@ Proxy-JS is an experimental library intended for my personal technical education
 <!--hello-world.html-->
 
 <div class="text-clickable">
-    <span @click="onClick(e)">{{model.title}}<br/>Clicked {{model.count}} times (Click me)</span>
+    <span @click="onClick(e)">{{model.title}}<br>Clicked {{model.count}} times (Click me)</span>
 </div>
 ```
 
@@ -80,9 +80,9 @@ $pLoad(() => {
 });
 ```
 
-### API Calls
+### API Calls (most relevant)
 
-| Import | Description | Parameter |
+| Import/Call | Description | Parameter |
 | ------- | -------- |----------- |
 |$pLoad(`callback`)  | `callback` called when document is ready and proxy-js is load | `callback` - parameterless function | 
 | $template | _Type_ | Represents a html-resource |
@@ -91,7 +91,6 @@ $pLoad(() => {
 | $template.appendTo(`$element`) <br> _`returns`_ - the `$template` | Appends the `$template` to a DOM `$element` | `$element` - DOM element|
 | $p | Global library object | Provides access to the libraries functions and core |
 | $p.bind(`webcomponent`, `$template`) | Bind `$template` to the model of a webcomponent | `webcomponent` - the webcomponent object <br> `$template` - html-resource |
-| $p.unbind(`$e`) | Recursively removes all bindings within `$e` and its descendants | `$e` - element to unbind |
 | $p.dom.styleSheet(`url`, `name`) | Maps the stylesheet at `url` to a `name` | `url` - adress to a stylesheet <br> `name` - name to map the stylesheet |
 | $p.dom.appendSheet(`shadowRoot`, `name1, ...nameX`) | Append stylesheets to the `shadowRoot` of a webcomponent | `shadowRoot` - shadowRoot of a Webcomponent <br> `name1...nameX` - Names of the mapped stylesheets to append  |
 
@@ -105,13 +104,33 @@ $pLoad(() => {
 | :disabled="`model.disabled ? 'disabled' : undefined`" | Attribute binding | Evaluates to the right hand expression, removed when expression is undefined | `expression` |
 | p-model="model.title" | Model binding for inputs | Binds the value of an $input element (text, checkbox) | - |
 | p-for="`book` in `model.books`" | Iterative binding | Repeats an element from the objects of an array. <br> The objects in the array will be the models of the webcomponents created by the binding | `name` in `array` |
-| @`event`="`callback`(`$e`, `e`, `item`)" | Event binding | Binds an `event` to a `callback` with optional parameters | `@event` - name of the event (e.g. click) <br /><br />`callback` - name of the callback methd<br /><br /> `$e` - target or delegate $element <br /><br /> `e` - event <br /><br /> `item` - name of a for-item (e.g. book) |
-| @`event`.`modifier`&`selector`=... | Event binding | Binds an `event` with optional modifiers and/or selector | `@event` - name of the event (e.g. click) <br /><br /> `modifier` - can be <br /> - once <br/> - capture <br /><br />`selector` - a valid css selector |
+| @`event`="`callback`(`$e`, `e`, `item`)" | Event binding | Binds an `event` to a `callback` with optional parameters | `@event` - name of the event (e.g. click) <br><br>`callback` - name of the callback methd<br><br> `$e` - target or delegate $element <br><br> `e` - event <br><br> `item` - name of a for-item (e.g. book) |
+| @`event`.`modifier`&`selector`=... | Event binding | Binds an `event` with optional modifiers and/or selector | `@event` - name of the event (e.g. click) <br><br> `modifier` - can be <br> - once <br> - capture <br><br>`selector` - a valid css selector |
+
+### API Calls (advanced)
+
+| Call | Description | Parameter |
+| ------- | -------- |----------- |
+| $p.unbind(`$e`) <br> *- removing elements without unbinding causes memory leaks* | Recursively removes all bindings within `$e` and its descendants | `$e` - element to unbind |
+| ... = new SilentValue(`value`, `listener`) | Assigning a value without triggering the watchers | `value` - the value to assign <br><br> `listener` - optional filter array to ignore only specific listener |
+| $p.events.one(`$e`, `eventName`, `handler`, `options`) | Registers an event handler which is unregistered after occuring once | `$e` - the element to register an event for <br><br> `eventName` - the name of the event to listen for <br><br> `handler` - event receiver function <br><br> `options` - event listening options | 
+| $p.dom.value(`$e`) | Returns the raw binding object data | `$e` - the element to get the binding data for |
+| $p.components.core(`f`) <br> ⚠️💀⚠️ - *core implementation can be changed, overriden or manipulated using this call* | Calls `f` passing the core implementation | `f` - a function of signature f(core) - where core is the inner core implementation |
+
+### Core API
+
+| Call (on `core`) | Description | Parameter |
+| ------- | -------- |----------- |
+| defineConstant(`name`) <br>*`returns` - the names constant id* | Maps a constant id to `name` | `name` - name of the constant | 
+| traverse(`$e`, `callback`) | Recursively passes `$e` and all descendant nodes to `callback($e)` where `$e` is the currently traversed node. <br><br> Return values of `callback($e)`: <br> `TRAVERSE_NODE_SKIP` - Skip descendants of `$e` <br> `TRAVERSE_NODE_STOP` - Stop traversing | `$e` - the element to traverse <br><br> `callback` - a function of signature callback($e) |
+| inverse(`$e`, `callback`) | Innermost first recursively passes all descendant nodes of `$e` to `callback($e)` where `$e` is the currently inversed node. <br><br> After all inversing, `$e` is passed to `callback` | `$e` - the element to inverse <br><br> `callback` - a function of signature callback($e) |
+| copy(`value`) <br> *`returns` deep copy of `value`* | Recursively creates a deep copy of `value` trying to avoid circular references | `value` - the object or array to deep copy |
+|more...|||
 
 <br>
 
-----
 ### Current work in progress...experimental features i am working at
+----
 ### I/O Handler - Define binding behaviour
 
 ```javascript
