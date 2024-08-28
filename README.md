@@ -124,7 +124,7 @@ $pLoad(() => {
 | defineConstant(`name`) <br>*`returns` - the names constant id* | Maps a constant id to `name` | `name` - name of the constant | 
 | traverse(`$e`, `callback`) | Recursively passes `$e` and all descendant nodes to `callback($e)` where `$e` is the currently traversed node. <br><br> Return values of `callback($e)`: <br> `TRAVERSE_NODE_SKIP` - Skip descendants of `$e` <br> `TRAVERSE_NODE_STOP` - Stop traversing | `$e` - the element to traverse <br><br> `callback` - a function of signature callback($e) |
 | inverse(`$e`, `callback`) | Innermost first recursively passes all descendant nodes of `$e` to `callback($e)` where `$e` is the currently inversed node. <br><br> After all inversing, `$e` is passed to `callback` | `$e` - the element to inverse <br><br> `callback` - a function of signature callback($e) |
-| copy(`value`) <br> *`returns` - deep copy of `value`* | Recursively creates a deep copy of `value` trying to avoid circular references | `value` - the object or array to deep copy |
+| copy(`value`) <br> *`returns` - deep copy of `value`* | Recursively creates a deep copy of `value` trying to resolve circular references | `value` - the object or array to deep copy |
 |more...|||
 
 <br>
