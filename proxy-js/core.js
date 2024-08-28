@@ -218,47 +218,60 @@ const core = {
             || (e && e.nodeType == Node.DOCUMENT_FRAGMENT_NODE);
     },
 
-    copy: function (value) {
+    copy: function (value, filter, refs) {
+        refs = refs || new Map();
+
         if (value === null || value === undefined) {
             return value;
         }
-    
-        if (typeof value !== 'object') {
+        else if (typeof value !== 'object') { 
             return value;
         }
-    
-        if (value instanceof Date) {
+        else if (value instanceof Date) {
             return new Date(value.getTime());
         }
-    
-        if (value instanceof RegExp) {
+        else if (value instanceof RegExp) {
             return new RegExp(value);
         }
-    
-        if (Array.isArray(value)) {
-            return value.map(item => core.copy(item));
+        else if (Array.isArray(value)) {
+            if (refs.has(value) == true) {
+                return refs.get(value);
+            }
+            else {
+                var newArray = value.map(item => core.copy(item, filter, refs));
+                refs.set(value, newArray);
+                return newArray;
+            }
         }
-    
-        if (value instanceof Map) {
+        else if (value instanceof Map) {
             const newMap = new Map();
             value.forEach((v, k) => {
-                newMap.set(k, core.copy(v));
+                newMap.set(k, core.copy(v, filter, refs));
             });
+            
             return newMap;
         }
-    
-        if (value instanceof Set) {
+        else if (value instanceof Set) {
             const newSet = new Set();
             value.forEach(v => {
-                newSet.add(core.copy(v));
+                newSet.add(core.copy(v, filter, refs));
             });
+
             return newSet;
         }
-    
+        
         const newObject = {};
+
+        if (refs.has(value) == true) {
+            return refs.get(value);
+        }
+        else {
+            refs.set(value, newObject);
+        }
+
         for (const key in value) {
             if (value.hasOwnProperty(key) && core.isFunction(value[key]) == false) {
-                newObject[key] = core.copy(value[key]);
+                newObject[key] = core.copy(value[key], filter, refs);
             }
         }
     
@@ -815,10 +828,9 @@ const _extendObserver = function (obj, listener) {
             listener.splice(index, 1);
         }
     };
-
     
-    const _unwrap = function () {
-        return core.copy(this);
+    const _unwrap = function (filter) {
+        return core.copy(this, filter);
     };
 
     if (_proxyReferences.has(obj) == true) {
