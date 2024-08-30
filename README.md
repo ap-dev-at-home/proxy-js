@@ -113,6 +113,7 @@ $pLoad(() => {
 | ------- | -------- |----------- |
 | $p.unbind(`$e`) <br> *- removing elements without unbinding causes memory leaks* | Recursively removes all bindings within `$e` and its descendants | `$e` - element to unbind |
 | ... = new SilentValue(`value`, `listener`) | Assigning a value without triggering the watchers | `value` - the value to assign <br><br> `listener` - optional filter array to ignore only specific listener |
+| $p.array.removeAll(`array`, `predicate`, `thisArg`) | Calls `predicate` passing every `item` from `array`, removing the `item` if `predicate` returns true | `array` - the array <br><br> `predicate` - filter function of signature f(`item`, `idx`, `array`) <br><br> `thisArg` - the context, the filter function is called on |
 | $p.events.one(`$e`, `eventName`, `handler`, `options`) | Registers an event handler which is unregistered after occuring once | `$e` - the element to register an event for <br><br> `eventName` - the name of the event to listen for <br><br> `handler` - event receiver function <br><br> `options` - event listening options | 
 | $p.dom.value(`$e`) | Returns the raw binding object data | `$e` - the element to get the binding data for |
 | $p.components.core(`f`) <br> ⚠️💀⚠️ - *core implementation can be changed, overriden or manipulated using this call* | Calls `f` passing the core implementation | `f` - a function of signature f(core) - where core is the inner core implementation |
