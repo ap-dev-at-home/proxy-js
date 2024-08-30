@@ -22,7 +22,7 @@ $p.components.core(function (core) {
         parse(name) {
             const attrName = name.substr(1);
             if (!attrName) {
-                throw new Error('Invalid attribute definition -> ' + this.name + ' ' + this.expression + ', example: ' + ':disabled="model.disabled"');
+                throw new SyntaxError('Invalid attribute definition -> ' + name + ' - ' + this.expression + ', example: ' + ':disabled="model.disabled"');
             }
 
             this.name = attrName;

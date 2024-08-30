@@ -26,11 +26,11 @@ $p.components.core(function (core) {
             this.identifiers = core.findIdentifiers(this.expression);
             
             if (this.identifiers.length > 1) {
-                throw new Error('Model contains more than one identifier -> ' + this.expression + ', example p-model="model.value"');
+                throw new SyntaxError('Model contains more than one identifier -> ' + this.expression + ', example: p-model="model.value"');
             }
 
             if (this.identifiers.length == 0) {
-                throw new Error('Model does not contain identifier -> ' + this.expression + ', example p-model="model.value"');
+                throw new SyntaxError('Model does not contain identifier -> ' + this.expression + ', example: p-model="model.value"');
             }
 
             this.virtualContext = core.virtualContext(this.$e, this.controller);

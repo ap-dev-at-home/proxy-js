@@ -118,7 +118,27 @@ const core = {
     arr: {
         forEach: Array.prototype.forEach,
         findIndex: Array.prototype.findIndex,
-        find: Array.prototype.find
+        find: Array.prototype.find,
+
+        removeAll: function (array, predicate, thisArg) {
+            if (array === null) {
+                throw new TypeError('array is null or not defined');
+            }
+
+            if (typeof predicate !== 'function') {
+                throw new TypeError('predicate must be a function');
+            }
+            
+            var length = array.length >>> 0;
+
+            for (var i = 0; i < length; i++) {
+                if (predicate.call(thisArg, array[i], i, array) === true) {
+                    array.splice(i, 1);
+                    i--;
+                    length--;
+                }
+            }
+        }
     },
 
     constants: { 
@@ -748,6 +768,12 @@ export const $p = {
 
         insertAfter: function ($e, $ref) {
             core.insertAfter($e, $ref);
+        }
+    },
+
+    array: {
+        removeAll: function (array, predicate, thisArg) {
+            core.arr.removeAll(array, predicate, thisArg);
         }
     }
 };

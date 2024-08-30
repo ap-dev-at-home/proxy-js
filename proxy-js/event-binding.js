@@ -18,7 +18,7 @@ $p.components.core(function (core) {
             
             this.eventName = core.nextToken(eventString, 0, core.isEventIdentifier);
             if (!this.eventName) {
-                throw new Error('Invalid event definition -> ' + name + ' ' + value + ', example: ' + '@event="handler($e, e, item)"');
+                throw new SyntaxError('Invalid event definition -> ' + name + ' - ' + value + ', example: ' + '@event="handler($e, e, item)"');
             }
 
             var modifierIndex = eventString.indexOf('.');
@@ -37,7 +37,7 @@ $p.components.core(function (core) {
                         this.modifiers.push(modifier);
                     }
                     else {
-                        throw new Error('Invalid event modifier -> ' + modifier + ', example: ' + '@event="click.once&selector"');
+                        throw new SyntaxError('Invalid event modifier -> ' + modifier + ', allowed options: ' + 'capture, once');
                     }
                 }, this);
             }
@@ -50,11 +50,11 @@ $p.components.core(function (core) {
             const { handler, parameter } = core.eventHandlerExpression(value);
 
             if (handler == null) {
-                throw new Error('Eventhandler missing or incorrectly formed -> ' + name + ' ' + value);
+                throw new SyntaxError('Eventhandler missing or incorrectly formed -> ' + name + ' - ' + value);
             }
 
-            if (typeof controller[handler] != 'function') {
-                throw new Error('Event callback is not a function or does not exists -> ' + name + ' ' + value);
+            if (typeof controller[handler] !== 'function') {
+                throw new SyntaxError('Event handler is not a function or does not exists -> ' + name + ' - ' + value);
             }
         
             this.handler = this.handle(controller, handler, parameter);

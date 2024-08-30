@@ -27,7 +27,7 @@ $p.components.core(function (core) {
             
             const forComponents = expression.split(' ');
             if (forComponents.length != 3) {
-                throw new Error('Expression not recognized ' + expression);
+                throw new SyntaxError('Expression not recognized ' + expression);
             }
 
             this.forComponents = forComponents;
@@ -52,11 +52,11 @@ $p.components.core(function (core) {
             const { handler, parameter } = core.eventHandlerExpression(onItem);
             
             if (handler == null) {
-                throw new Error(`Callback missing or incorrectly formed -> ${ATTRIBUTE_NAME_COMPONENT}="onComponent()"`);
+                throw new SyntaxError(`Callback missing or incorrectly formed -> ${ATTRIBUTE_NAME_COMPONENT}="onComponent(item)"`);
             }
 
-            if (typeof controller[handler] != 'function') {
-                throw new Error(`Callback is not a function or does not exists -> ${ATTRIBUTE_NAME_COMPONENT}="${handler}()"`);
+            if (typeof controller[handler] !== 'function') {
+                throw new SyntaxError(`Callback is not a function or does not exists -> ${ATTRIBUTE_NAME_COMPONENT}="${handler}"`);
             }
 
             this.handler = controller[handler].bind(this.controller);
@@ -94,7 +94,7 @@ $p.components.core(function (core) {
             }
 
             if (!$item) {
-                throw new Error('Template is not defined -> for -> ' + this.expression);
+                throw new SyntaxError('Template is not defined -> p-for - ' + this.expression);
             }
 
             core.setBindingData($item, {
