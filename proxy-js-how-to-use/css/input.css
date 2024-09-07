@@ -1,0 +1,52 @@
+button {
+    --bg: rgb(48, 185, 164);
+    font-size: 1.05em;
+    border-radius: 22px;
+    border: none;
+    padding: 8px 14px 8px 14px;
+    margin: 8px;
+    cursor: pointer;
+    color: color-mix(in srgb, var(--bg) 30%, whitesmoke 70%);
+    background-color: var(--bg);
+    user-select: none;
+    transition: text-shadow 0.25s, box-shadow 0.25s, transform 0.25s;
+}
+
+button:hover {
+    text-shadow: 0 0 5px lightgrey;
+    box-shadow: 0 0 5px lightgrey;
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+input[type="text"] {
+    border-radius: 8px;
+    font-size: 1.05em;
+    padding: 8px 14px 8px 14px;
+    margin: 8px;
+    border: 2px solid transparent;
+    background-color: whitesmoke;
+    color: rgb(45, 45, 45);
+    user-select: none;
+    transition: text-shadow 0.25s, box-shadow 0.25s, transform 0.25s;
+}
+
+input[type="text"]:focus {
+    outline: 2px solid rgb(48, 185, 164);
+    box-shadow: 0 0 5px lightgrey;
+}
+
+input[type="text"]:disabled {
+    background-color: #b0b0b0;
+    color: lightgray;
+}
+
+input[type="checkbox"] {
+    cursor: pointer;
+    user-select: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 4px;
+}
