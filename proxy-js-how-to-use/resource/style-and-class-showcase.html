@@ -5,8 +5,8 @@
     }">
         Title with styles turned on or off
     </div>
-    <input type="checkbox" p-model="model.check.red">Red</input>
-    <input type="checkbox" p-model="model.check.bold">Bold</input>
+    <input type="checkbox" :checked="model.check.red">Red</input>
+    <input type="checkbox" :checked="model.check.bold">Bold</input>
 </div>
 <div style="margin-top: 20px;"></div>
 <div style="user-select: none; font-size: 24px; display: flex; align-content: center; justify-content: center;">
@@ -15,6 +15,6 @@
     }"></div>
 </div>
 <div>
-    <input type="checkbox" p-model="model.check.spin">Spin</input>
+    <input type="checkbox" :checked="model.check.spin">Spin</input>
 </div>
 <button @click="onReset(e)">Reset</button>
