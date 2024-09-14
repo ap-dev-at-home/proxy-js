@@ -2,7 +2,7 @@
 
 Proxy-JS is an experimental library intended for my personal technical education/training only. I started Proxy-JS as an endeavour to evaluate the utilizability of ES6-Proxies for Javascript data binding. __BUT__ it is __NOT__ safe, tested or final for production environment or any other purpose.
 
-### Proxy-JS - A primitive Javascript data binding library
+# Proxy-JS - A primitive Javascript data binding library
 
 - Few APIs
 - No buildsteps
@@ -84,7 +84,7 @@ $pLoad(() => {
 
 | Import/Call | Description | Parameter |
 | ------- | -------- |----------- |
-|$pLoad(`callback`)  | `callback` called when document is ready and proxy-js is load | `callback` - parameterless function | 
+| $pLoad(`callback`)  | `callback` called when document is ready and proxy-js is load | `callback` - parameterless function | 
 | $template | _Type_ | Represents a html-resource |
 | $pResource(`url`) <br> _`returns`_ - promise resolving to a `$template` | Fetch and cache a html-resource (_awaitable method_) | `url` - address to the html-resource |
 | $template.bind(`webcomponent`) <br> _`returns`_ - the `$template` | Binds a `$template` to the model of a webcomponent | `webcomponent` - the webcomponent object |
