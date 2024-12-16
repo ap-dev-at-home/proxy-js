@@ -15,6 +15,16 @@ Proxy-JS is an experimental library intended for my personal technical education
     - Css
     - Html-Templates
 
+
+### Table of Contents
+
+- [Webcomponent example](#webcomponent-example)
+- [API Calls (most relevant)](#api-calls-most-relevant)
+- [Binding Attributes](#binding-attributes)
+- [API Calls (advanced)](#api-calls-advanced)
+- [Core API](#core-api)
+- [Current work in progress...experimental features](#current-work-in-progressexperimental-features)
+
 ### Webcomponent example
 
 ```html
@@ -131,7 +141,7 @@ $pLoad(() => {
 
 <br>
 
-### Current work in progress...experimental features i am working at
+### Current work in progress...experimental features
 ----
 ### I/O Handler - Define binding behaviour
 
