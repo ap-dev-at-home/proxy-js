@@ -1,6 +1,6 @@
-### Beta/Evaluation-Warning ⚠️
+### Proxy-JS
 
-Proxy-JS is an experimental library intended for my personal technical education/training only. I started Proxy-JS as an endeavour to evaluate the utilizability of ES6-Proxies for Javascript data binding. __BUT__ it is __NOT__ safe, tested or final for production environment or any other purpose.
+Proxy-JS is an experimental HTML5 data-binding library intended for use in my personal home applications only. I started Proxy-JS as an endeavour to evaluate the utilizability of ES6-Proxies for Javascript data binding. It is __NOT__ safe, tested or final for production environment or any other purpose.
 
 # Proxy-JS - A primitive Javascript data binding library
 
@@ -23,6 +23,7 @@ Proxy-JS is an experimental library intended for my personal technical education
 - [Binding Attributes](#binding-attributes)
 - [API Calls (advanced)](#api-calls-advanced)
 - [Core API](#core-api)
+- [Dynamic For Templates](#dynamic-for-templates---determine-for-binding-webcomponent-at-runtime)
 - [Current work in progress...experimental features](#current-work-in-progressexperimental-features)
 
 ### Webcomponent example
@@ -141,6 +142,28 @@ $pLoad(() => {
 
 <br>
 
+### Dynamic For Templates - Determine for binding webcomponent at runtime
+
+```html
+<div class="pnl-task">
+    <!--template is not rendered, onTaskComponent returns the name of a webcomponent-->
+    <template p-for="task in model.tasks" p-component="onTaskComponent()"></template>
+    <!--onTaskComponent is called for every for-item-->
+</div>
+```
+
+```javascript
+//return the name of a webcomponent to use for the current for binding item
+onTaskComponent(task) { 
+    if (task.type == TASK_TYPE_NOTE) {
+        return 'task-note'; //use task-note Webcomponent
+    }
+    else if (task.type == TASK_TYPE_TODO) {
+        return 'task-todo'; //use task-todo Webcomponent
+    }
+}
+```
+
 ### Current work in progress...experimental features
 ----
 ### I/O Handler - Define binding behaviour
@@ -190,27 +213,4 @@ $p.components.core(function (core) { //add a core component
 
 ```html
 <div class="file-item-date">{{$dateformat(model.changed)}}</div>
-```
-<br>
-
-### Dynamic For Templates - Determine for binding webcomponent at runtime
-
-```html
-<div class="pnl-task">
-    <!--template is not rendered, onTaskComponent returns the name of a webcomponent-->
-    <template p-for="task in model.tasks" p-component="onTaskComponent()"></template>
-    <!--onTaskComponent is called for every for-item-->
-</div>
-```
-
-```javascript
-//return the name of a webcomponent to use for the current for binding item
-onTaskComponent(task) { 
-    if (task.type == TASK_TYPE_NOTE) {
-        return 'task-note'; //use task-note Webcomponent
-    }
-    else if (task.type == TASK_TYPE_TODO) {
-        return 'task-todo'; //use task-todo Webcomponent
-    }
-}
 ```
