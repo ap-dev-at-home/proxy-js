@@ -101,7 +101,7 @@ $pLoad(() => {
 | $template.bind(`webcomponent`) <br> _`returns`_ - the `$template` | Binds a `$template` to the model of a webcomponent | `webcomponent` - the webcomponent object |
 | $template.appendTo(`$element`) <br> _`returns`_ - the `$template` | Appends the `$template` to a DOM `$element` | `$element` - DOM element|
 | $p | Global library object | Provides access to the libraries functions and core |
-| $p.bind(`webcomponent`, `$template`) | Bind `$template` to the model of a webcomponent | `webcomponent` - the webcomponent object <br> `$template` - html-resource |
+| $p.bind(`webcomponent`, `$template`) | Bind `$template` to the model of a webcomponent - Model members starting with an underscore are not bound | `webcomponent` - the webcomponent object <br> `$template` - html-resource |
 | $p.dom.styleSheet(`url`, `name`) | Maps the stylesheet at `url` to a `name` | `url` - adress to a stylesheet <br> `name` - name to map the stylesheet |
 | $p.dom.appendSheet(`shadowRoot`, `name1, ...nameX`) | Append stylesheets to the `shadowRoot` of a webcomponent | `shadowRoot` - shadowRoot of a Webcomponent <br> `name1...nameX` - Names of the mapped stylesheets to append  |
 
